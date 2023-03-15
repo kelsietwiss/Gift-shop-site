@@ -1,0 +1,20 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" contents="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>A Walk in the Woods</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+    </head>
+    <body>
+        <canvas id="canvas1"></canvas>
+        <img id="playerImage" src="{% static 'player.png' %}">
+        <img id="backgroundImage" src="{% static 'RainbowWoodsBG.png' %}">
+        <img id="enemyImage" src="{% static 'enemy_1.png' %}">
+
+        <script src="static/js/script.js"></script>
+    </body>
+</html>
