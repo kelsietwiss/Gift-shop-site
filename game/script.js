@@ -90,7 +90,7 @@ window.addEventListener('load', function(){
             this.y = 0;
             this.width = 2400;
             this.height = 720;
-            this.speed = 20;
+            this.speed = 10;
         }
         draw(context){
             context.drawImage(this.image, this.x, this.y, this.width, this.height);
@@ -153,7 +153,7 @@ window.addEventListener('load', function(){
         lastTime = timeStamp;
         ctx.clearRect(0,0, canvas.width, canvas.height);
         background.draw(ctx);
-       // background.update();
+        //background.update();
         player.draw(ctx);
         player.update(input);
         handleEnemies(deltaTime);

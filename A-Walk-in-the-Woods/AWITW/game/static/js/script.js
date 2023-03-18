@@ -5,6 +5,7 @@ window.addEventListener('load', function(){
     canvas.height = 720;
     let enemies = []
     let score = 0;
+    let gameOver = false;
 
     class InputHandler {
         constructor(){
@@ -51,12 +52,19 @@ window.addEventListener('load', function(){
             this.weight = 1;
         }
         draw(context){
-            //context.fillStyle = 'white';
-            //context.fillRect(this.x, this.y, this.width, this.height);
             context.drawImage(this.image, this.framex * this.width, this.framey * this.height, 
                 this.width, this.height, this.x, this.y, this.width, this.height);
         }
-        update(input, deltaTime){
+        update(input, deltaTime, enemies){
+            enemies.forEach(enemy => {
+                const dx = (enemy.x + enemy.width/2) - (this.x + this.width/2);
+                const dy = (enemy.y + enemy.height/2) - (this.y + this.height/2);
+                const distance = Math.sqrt(dx*dx+dy*dy);
+                if (distance < enemy.width/2 + this.width/2){
+                    gameOver = true;
+                }
+            })
+
             if (this.frameTimer > this.frameInterval){
                 if (this.framex >= this.maxFrame) this.framex = 0;
                 else this.framex++;
@@ -119,17 +127,18 @@ window.addEventListener('load', function(){
     }
 
     class Enemy {
-        constructor(gameWidth, gameHeight){
-            this.gameWidth = gameWidth;
-            this.gameHeight = gameHeight;
-            this.width = 160;
-            this.height = 119;
-            this.image = document.getElementById('enemyImage');
-            this.x = this.gameWidth;
-            this.y = this.gameHeight - this.height;
+        constructor(){
+            //this.gameWidth = gameWidth;
+            //this.gameHeight = gameHeight;
+            //this.width = 300;
+            //this.height = 200;
+            //this.image = document.getElementById('enemyImage');
+            //this.x = this.gameWidth;
+            //this.y = this.gameHeight - this.height;
             this.framex = 0;
-            this.maxFrame = 5;
-            this.fps = 20;
+            this.framey = 0;
+            //this.maxFrame = 5;
+            this.fps = 10;
             this.frameTimer = 0;
             this.frameInterval = 1000/this.fps;
             this.speed = 9;
@@ -138,6 +147,7 @@ window.addEventListener('load', function(){
         draw(context){
             context.drawImage(this.image, this.framex * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height,);
         }
+
         update(deltaTime){
             if (this.frameTimer > this.frameInterval){
                 if (this.framex >= this.maxFrame) this.framex = 0;
@@ -155,6 +165,31 @@ window.addEventListener('load', function(){
         }
     }
 
+    class FlyingEnemy extends Enemy {
+        constructor(game){
+            super();
+            this.game = game;
+            this.width = 160;
+            this.height = 100;
+            this.x = 200;
+            this.y = 200;
+            this.speedx = 2;
+            this.maxFrame = 5;
+            this.image = document.getElementById('enemyBat');
+        }
+        update(deltaTime){
+            super.update(deltaTime);
+            
+        }
+    }
+
+    class GroundEnemy extends Enemy {
+
+    }
+
+    class ClimbingEnemy extends Enemy {
+
+    }
 
     function handleEnemies(deltaTime){
         if (enemyTimer > enemyInterval + randomEnemyInterval){
@@ -177,6 +212,14 @@ window.addEventListener('load', function(){
         context.fillText('Score: ' + score, 20, 50);
         context.fillStyle = 'white';
         context.fillText('Score: ' + score, 22, 52);
+        if (gameOver){
+            context.textAlign = 'center';
+            context.fillStyle = 'black';
+            context.fillText('Game Over! Try Again!', canvas.width/2, 200);
+            context.textAlign = 'center';
+            context.fillStyle = 'white';
+            context.fillText('Game Over! Try Again!', canvas.width/2 + 2, 202);
+        }
     }
 
     const input = new InputHandler();
@@ -195,10 +238,10 @@ window.addEventListener('load', function(){
         background.draw(ctx);
         background.update();
         player.draw(ctx);
-        player.update(input, deltaTime);
+        player.update(input, deltaTime, enemies);
         handleEnemies(deltaTime);
         displayStatusText(ctx);
-        requestAnimationFrame(animate);
+        if (!gameOver) requestAnimationFrame(animate);
         
     }
    animate(0);
